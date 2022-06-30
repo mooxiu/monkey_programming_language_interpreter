@@ -41,6 +41,18 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.ASSIGN, l.ch)
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
+	case '!':
+		tok = newToken(token.BANG, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case '<':
+		tok = newToken(token.LT, l.ch)
+	case '>':
+		tok = newToken(token.GT, l.ch)
 	case ',':
 		tok = newToken(token.COMMA, l.ch)
 	case ';':
@@ -100,12 +112,8 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[originalPosition:l.readPosition]
 }
 
-// l.ch is not " "
+// move to next until l.ch is not " "
 func (l *Lexer) skipWhitespace() {
-	// if the end, do not do anything
-	if l.readPosition >= len(l.input) {
-		return
-	}
 	for isWhitespace(l.ch) {
 		l.readChar()
 	}
@@ -115,6 +123,8 @@ func (l *Lexer) skipWhitespace() {
 /*
 	isWhitespace decide whether this char can be ignored
 	ref: https://ja.wikipedia.org/wiki/ASCII
+
+	TODO: optimize the sort
 */
 func isWhitespace(ch byte) bool {
 	return ch == '\t' || ch == '\n' || ch == '\r' || ch == ' '
