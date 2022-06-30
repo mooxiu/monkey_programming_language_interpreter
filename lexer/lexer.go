@@ -38,13 +38,31 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		tok = newToken(token.ASSIGN, l.ch)
+		if l.peekChar() == '=' {
+			thisChar := l.ch
+			l.readChar()
+			tok = token.Token{
+				Type:    token.EQ,
+				Literal: string(thisChar) + string(l.ch),
+			}
+		} else {
+			tok = newToken(token.ASSIGN, l.ch)
+		}
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
 	case '-':
 		tok = newToken(token.MINUS, l.ch)
 	case '!':
-		tok = newToken(token.BANG, l.ch)
+		if l.peekChar() == '=' {
+			thisChar := l.ch
+			l.readChar()
+			tok = token.Token{
+				Type:    token.NOT_EQ,
+				Literal: string(thisChar) + string(l.ch),
+			}
+		} else {
+			tok = newToken(token.BANG, l.ch)
+		}
 	case '*':
 		tok = newToken(token.ASTERISK, l.ch)
 	case '/':
@@ -106,7 +124,7 @@ func (l *Lexer) readIdentifier() string {
 	originalPosition := l.position
 	// move until next position is not letter
 	// TODO: actually identifier can end up with number: like `s1`
-	for isLetter(l.input[l.readPosition]) {
+	for isLetter(l.peekChar()) {
 		l.readChar()
 	}
 	return l.input[originalPosition:l.readPosition]
@@ -137,8 +155,16 @@ func isDigit(ch byte) bool {
 func (l *Lexer) readNum() string {
 	originalPosition := l.position
 	// move until next position is not digit
-	for isDigit(l.input[l.readPosition]) {
+	for isDigit(l.peekChar()) {
 		l.readChar()
 	}
 	return l.input[originalPosition:l.readPosition]
+}
+
+// see next position char
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	}
+	return l.input[l.readPosition]
 }
