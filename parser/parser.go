@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"monkey/ast"
 	"monkey/lexer"
 	"monkey/token"
@@ -11,16 +12,29 @@ type Parser struct {
 
 	curToken  token.Token
 	peekToken token.Token
+
+	errors []string
 }
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
-		l: l,
+		l:      l,
+		errors: []string{},
 	}
 
 	p.nextToken()
 	p.nextToken()
 	return p
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+// when peekToken type is not what we expected
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
 
 // move to next token
@@ -67,6 +81,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	// the ident to assign ... must ... of course ... is ident
 	nextIdent := p.peekToken
 	if nextIdent.Type != token.IDENT {
+		p.peekError(token.IDENT)
 		return nil
 	}
 	stmt.Name = &ast.Identifier{
@@ -78,6 +93,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 
 	// parse the assign token -> "="
 	if p.peekToken.Type != token.ASSIGN {
+		p.peekError(token.ASSIGN)
 		return nil
 	}
 	p.nextToken()
