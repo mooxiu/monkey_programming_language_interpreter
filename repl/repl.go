@@ -1,0 +1,3 @@
+package repl
+
+const PROPMT = ">> "
