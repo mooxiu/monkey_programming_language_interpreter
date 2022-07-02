@@ -78,6 +78,21 @@ func (i *Identifier) String() string {
 	return i.Value
 }
 
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il IntegerLiteral) TokenLiteral() string {
+	return il.Token.Literal
+}
+
+func (il IntegerLiteral) String() string {
+	return il.Token.Literal
+}
+
+func (il IntegerLiteral) expressionNode() {}
+
 type ReturnStatement struct {
 	Token       token.Token // RETURN
 	ReturnValue Expression
