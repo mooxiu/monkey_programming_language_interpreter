@@ -368,6 +368,22 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 			input:    "3 + 4 * 5 == 3 * 1 + 4 * 5",
 			expected: "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
 		},
+		{
+			input:    "true",
+			expected: "true",
+		},
+		{
+			input:    "false",
+			expected: "false",
+		},
+		{
+			input:    "3 > 5 == false",
+			expected: "((3 > 5) == false)",
+		},
+		{
+			input:    "3 < 5 == true",
+			expected: "((3 < 5) == true)",
+		},
 	}
 
 	for _, tt := range tests {
@@ -382,3 +398,23 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		}
 	}
 }
+
+// func testIdentifier(t *testing.T, exp ast.Expression, value string) bool {
+// 	ident, ok := exp.(*ast.Identifier)
+// 	if !ok {
+// 		t.Errorf("exp not *ast.Identifier. got=%T", exp)
+// 		return false
+// 	}
+
+// 	if ident.Value != value {
+// 		t.Errorf("ident.Value not %s. got=%s", value, ident.Value)
+// 		return false
+// 	}
+
+// 	if ident.TokenLiteral() != value {
+// 		t.Errorf("ident.TokenLiteral not %s. got=%s", value, ident.TokenLiteral())
+// 		return false
+// 	}
+
+// 	return true
+// }
